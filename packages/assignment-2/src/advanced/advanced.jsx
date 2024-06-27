@@ -1,12 +1,70 @@
 import { createContext, useContext, useState } from "react";
 
-export const memo1 = (fn) => fn();
+const cache = new Map();
 
-export const memo2 = (fn) => fn();
+export const memo1 = (fn) => {
+  const key = fn.toString();
+  return (() => {
+    if(cache.has(key)) {
+      return cache.get(key);
+    } else {
+      const result = fn();
+      cache.set(key, result);
+      return result;
+    }
+  })();
+};
+
+const cache2 = new Map();
+
+export const memo2 = (fn, arr) => {
+  const key = fn.toString();
+  
+  return (() => {
+    let returnArr;
+    
+    if(cache2.has(key)) {
+      returnArr = cache2.get(key);
+    } else {
+      const result = fn();
+      cache2.set(key, result);
+      returnArr = result;
+    }
+    if(!cache2.has(`arr${key}`)) {
+      cache2.set(`arr${key}`, arr[0]);
+      returnArr.length = arr[0];
+    } else {
+      returnArr.length = cache2.get(`arr${key}`);
+    }
+    return returnArr
+  })();
+};
 
 
 export const useCustomState = (initValue) => {
-  return useState(initValue);
+  const [state, setState] = useState(initValue);
+
+  const isEqual = (curVal, newVal) => {
+    if(!curVal && !newVal) return true;
+    else if(!curVal || !newVal) return false;
+    if(curVal instanceof NodeList) curVal = Array.from(curVal)
+    if(newVal instanceof NodeList) newVal = Array.from(newVal)
+
+    const key1 = Object.keys(curVal);
+    const key2 = Object.keys(newVal);
+    if(key1.length !== key2.length) return false;
+    for(let k of key1) {
+      if(curVal[k] !== newVal[k]) return false;
+    }
+    return true;
+  }
+
+  const customSetState = (newVal) => {
+    if(!isEqual(state, newVal)) {
+      return setState(newVal);
+    }
+  }
+  return [state, customSetState]
 }
 
 const textContextDefaultValue = {
