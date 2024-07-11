@@ -40,14 +40,7 @@ function changeTextContent(target, text) {
 }
 
 function getSameProduct(id) {
-  let result;
-  PRODUCT_LIST.some((product) => {
-    if (product.id !== id) return false;
-    result = product;
-    return true;
-  });
-
-  return result;
+  return PRODUCT_LIST.find((product) => product.id === id);
 }
 
 function updateComponent() {
