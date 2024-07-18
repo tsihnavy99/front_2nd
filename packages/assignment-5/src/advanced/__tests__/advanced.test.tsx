@@ -1,9 +1,17 @@
 import { useState } from 'react';
-import { describe, expect, test } from 'vitest';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  screen,
+  within,
+} from '@testing-library/react';
 import { CartPage } from '../../refactoring/components/CartPage';
 import { AdminPage } from '../../refactoring/components/AdminPage';
 import { Coupon, Product } from '../../types';
+import { useLocalStorage } from '../../refactoring/hooks';
 import * as couponUtils from '../../refactoring/hooks/utils/couponUtils';
 
 const mockProducts: Product[] = [
@@ -294,6 +302,88 @@ describe('advanced > ', () => {
       });
     });
 
-    describe('[Hook] 테스트 >', () => {});
+    describe('[Hook] useLocalStorage 테스트 >', () => {
+      beforeEach(() => {
+        localStorage.clear();
+      });
+
+      afterEach(() => {
+        localStorage.clear();
+      });
+      const testCoupon: Coupon = {
+        name: 'Test Coupon',
+        code: 'TEST',
+        discountType: 'percentage',
+        discountValue: 10,
+      };
+
+      // ---- 상품 관련 ----
+      test('새로고침 시에도 추가한 상품 기억 >', async () => {
+        render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+
+        const product1 = screen.getByTestId('product-p1');
+        const product2 = screen.getByTestId('product-p2');
+        const product3 = screen.getByTestId('product-p3');
+
+        const addToCartButtonsAtProduct1 =
+          within(product1).getByText('장바구니에 추가');
+        const addToCartButtonsAtProduct2 =
+          within(product2).getByText('장바구니에 추가');
+        const addToCartButtonsAtProduct3 =
+          within(product3).getByText('장바구니에 추가');
+
+        // 상품 추가 (상품1: 2, 상품2: 3, 상품3: 1)
+        fireEvent.click(addToCartButtonsAtProduct1); // 상품1 추가
+        fireEvent.click(addToCartButtonsAtProduct1); // 상품1 추가
+        fireEvent.click(addToCartButtonsAtProduct2); // 상품2 추가
+        fireEvent.click(addToCartButtonsAtProduct2); // 상품2 추가
+        fireEvent.click(addToCartButtonsAtProduct2); // 상품2 추가
+        fireEvent.click(addToCartButtonsAtProduct3); // 상품3 추가
+
+        // 추가된 상품 확인
+        const cartBeforeRefresh = localStorage.getItem('cart');
+        expect(JSON.parse(cartBeforeRefresh || '')?.length).toBe(3);
+
+        // 새로고침
+        render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+
+        // 새로고침 후 추가했던 상품 유지되는지 테스트
+        const cartAfterRefresh = localStorage.getItem('cart');
+        expect(JSON.parse(cartAfterRefresh || '')?.length).toBe(3);
+      });
+
+      // ---- 쿠폰 관련 ----
+      test('새로고침 시에도 선택한 쿠폰 기억 >', async () => {
+        const { result } = renderHook(() => useLocalStorage());
+
+        // 쿠폰 선택
+        act(() => {
+          result.current.applyCoupon(testCoupon);
+        });
+
+        // 선택된 쿠폰 확인
+        expect(result.current.selectedCoupon).toEqual(testCoupon);
+
+        // 새로고침
+        render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+
+        // 새로고침 후 선택했던 쿠폰 유지되는지 테스트
+        expect(result.current.selectedCoupon).toEqual(testCoupon);
+
+        //쿠폰 해제(옵션 중 '쿠폰 선택' 선택)
+        act(() => {
+          result.current.applyCoupon(null);
+        });
+
+        // 쿠폰 해제 확인
+        expect(result.current.selectedCoupon).toEqual(null);
+
+        // 새로고침
+        render(<CartPage products={mockProducts} coupons={mockCoupons} />);
+
+        // 새로고침 후 쿠폰 해제 상태 유지되는지 테스트
+        expect(result.current.selectedCoupon).toEqual(null);
+      });
+    });
   });
 });
