@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { CartItem, Coupon } from '../../types';
 import { useCart } from './useCart';
 import { findIndexOfSelectedCoupon } from './utils/couponUtils';
+import { debounce } from './utils/commonUtils';
 
 export const useLocalStorage = () => {
   const {
@@ -15,6 +16,16 @@ export const useLocalStorage = () => {
     getRemainingStock,
     getAppliedDiscount,
   } = useCart();
+
+  // debounce로 cart값 넘길 때 바뀐 값이 넘어가지 않아 ref로 지정
+  const cartRef = useRef(cart);
+
+  // localStorage 업데이트는 debounce 적용
+  // eslint-disable-next-line
+  const debouncedCart = useCallback(
+    debounce(() => storeCartToLocal(cartRef.current)),
+    []
+  );
 
   useEffect(() => {
     const getLocalCart = () => {
@@ -46,7 +57,9 @@ export const useLocalStorage = () => {
   }, []); // warning 권장대로 값 넣으면 무한루프발생 => eslint ignore
 
   useEffect(() => {
-    storeCartToLocal(cart);
+    cartRef.current = cart;
+    debouncedCart();
+    // eslint-disable-next-line
   }, [cart]);
 
   useEffect(() => {

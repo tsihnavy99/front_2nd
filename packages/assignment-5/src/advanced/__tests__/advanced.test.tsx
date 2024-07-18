@@ -340,7 +340,8 @@ describe('advanced > ', () => {
         fireEvent.click(addToCartButtonsAtProduct2); // 상품2 추가
         fireEvent.click(addToCartButtonsAtProduct3); // 상품3 추가
 
-        // 추가된 상품 확인
+        // 추가된 상품 확인(debounce 적용으로 인해 delay 추가)
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const cartBeforeRefresh = localStorage.getItem('cart');
         expect(JSON.parse(cartBeforeRefresh || '')?.length).toBe(3);
 
@@ -348,6 +349,7 @@ describe('advanced > ', () => {
         render(<CartPage products={mockProducts} coupons={mockCoupons} />);
 
         // 새로고침 후 추가했던 상품 유지되는지 테스트
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const cartAfterRefresh = localStorage.getItem('cart');
         expect(JSON.parse(cartAfterRefresh || '')?.length).toBe(3);
       });
