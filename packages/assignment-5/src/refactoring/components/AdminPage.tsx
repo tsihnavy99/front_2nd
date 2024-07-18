@@ -11,6 +11,7 @@ interface Props {
   onProductUpdate: (updatedProduct: Product) => void;
   onProductAdd: (newProduct: Product) => void;
   onCouponAdd: (newCoupon: Coupon) => void;
+  removeCoupon: (couponCode: string) => void;
 }
 
 export const AdminPage = ({
@@ -19,6 +20,7 @@ export const AdminPage = ({
   onProductUpdate,
   onProductAdd,
   onCouponAdd,
+  removeCoupon,
 }: Props) => {
   const [newCoupon, setNewCoupon] = useState<Coupon>({
     name: '',
@@ -96,7 +98,11 @@ export const AdminPage = ({
               <h3 className="text-lg font-semibold mb-2">현재 쿠폰 목록</h3>
               <div className="space-y-2">
                 {coupons.map((coupon, index) => (
-                  <CouponListItem coupon={coupon} index={index} />
+                  <CouponListItem
+                    coupon={coupon}
+                    index={index}
+                    removeCoupon={removeCoupon}
+                  />
                 ))}
               </div>
             </div>

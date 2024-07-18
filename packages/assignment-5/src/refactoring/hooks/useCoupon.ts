@@ -1,5 +1,6 @@
 import { Coupon } from '../../types.ts';
 import { useState } from 'react';
+import { removeFromCouponsByCode } from './utils/couponUtils.ts';
 
 export const useCoupons = (initialCoupons: Coupon[]) => {
   const [coupons, setCoupons] = useState(initialCoupons);
@@ -8,5 +9,11 @@ export const useCoupons = (initialCoupons: Coupon[]) => {
     setCoupons((prevCoupons) => [...prevCoupons, newCoupon]);
   };
 
-  return { coupons, addCoupon };
+  const removeCoupon = (couponCode: string) => {
+    setCoupons((prevCoupons) =>
+      removeFromCouponsByCode(prevCoupons, couponCode)
+    );
+  };
+
+  return { coupons, addCoupon, removeCoupon };
 };
