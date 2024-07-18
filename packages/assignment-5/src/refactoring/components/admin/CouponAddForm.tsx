@@ -1,39 +1,51 @@
-import { Dispatch, SetStateAction } from 'react';
 import { Coupon } from '../../../types';
+import { useCouponAddForm } from '../../hooks/useCouponAddForm';
 
 interface Props {
-  useNewCoupon: [Coupon, Dispatch<SetStateAction<Coupon>>];
-  handleAddCoupon: () => void;
+  onCouponAdd: (newCoupon: Coupon) => void;
 }
 
-export const CouponAddForm = ({
-  useNewCoupon: [newCoupon, setNewCoupon],
-  handleAddCoupon,
-}: Props) => {
+export const CouponAddForm = ({ onCouponAdd }: Props) => {
+  const {
+    newCoupon,
+    updateCouponName,
+    updateCouponCode,
+    updateCouponDiscountType,
+    updateCouponDiscountValue,
+    resetNewCoupon,
+    checkAllDataFilled,
+  } = useCouponAddForm();
+
+  const handleAddCoupon = () => {
+    if (checkAllDataFilled()) {
+      onCouponAdd(newCoupon);
+      resetNewCoupon();
+    } else {
+      alert('모든 값을 입력한 후에 추가해주세요.');
+    }
+  };
+
   return (
     <div className="space-y-2 mb-4">
       <input
         type="text"
         placeholder="쿠폰 이름"
         value={newCoupon.name}
-        onChange={(e) => setNewCoupon({ ...newCoupon, name: e.target.value })}
+        onChange={(e) => updateCouponName(e.target.value)}
         className="w-full p-2 border rounded"
       />
       <input
         type="text"
         placeholder="쿠폰 코드"
         value={newCoupon.code}
-        onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value })}
+        onChange={(e) => updateCouponCode(e.target.value)}
         className="w-full p-2 border rounded"
       />
       <div className="flex gap-2">
         <select
           value={newCoupon.discountType}
           onChange={(e) =>
-            setNewCoupon({
-              ...newCoupon,
-              discountType: e.target.value as 'amount' | 'percentage',
-            })
+            updateCouponDiscountType(e.target.value as 'percentage' | 'amount')
           }
           className="w-full p-2 border rounded"
         >
@@ -44,12 +56,7 @@ export const CouponAddForm = ({
           type="number"
           placeholder="할인 값"
           value={newCoupon.discountValue}
-          onChange={(e) =>
-            setNewCoupon({
-              ...newCoupon,
-              discountValue: parseInt(e.target.value),
-            })
-          }
+          onChange={(e) => updateCouponDiscountValue(Number(e.target.value))}
           className="w-full p-2 border rounded"
         />
       </div>

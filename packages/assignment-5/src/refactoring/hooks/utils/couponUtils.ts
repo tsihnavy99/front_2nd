@@ -13,3 +13,11 @@ export const findIndexOfSelectedCoupon = (
 ) => {
   return coupons.findIndex((coupon) => coupon.code === selectedCoupon.code);
 };
+
+export const checkAllCouponDataFilled = (coupon: Coupon) => {
+  return Object.values(coupon).every((value) => {
+    if (typeof value === 'string' && value === '') return false;
+    if (typeof value === 'number' && value === 0) return false;
+    return true;
+  });
+};

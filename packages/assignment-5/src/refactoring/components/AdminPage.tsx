@@ -22,12 +22,6 @@ export const AdminPage = ({
   onCouponAdd,
   removeCoupon,
 }: Props) => {
-  const [newCoupon, setNewCoupon] = useState<Coupon>({
-    name: '',
-    code: '',
-    discountType: 'percentage',
-    discountValue: 0,
-  });
   const [showNewProductForm, setShowNewProductForm] = useState(false);
   const [newProduct, setNewProduct] = useState<Omit<Product, 'id'>>({
     name: '',
@@ -35,16 +29,6 @@ export const AdminPage = ({
     stock: 0,
     discounts: [],
   });
-
-  const handleAddCoupon = () => {
-    onCouponAdd(newCoupon);
-    setNewCoupon({
-      name: '',
-      code: '',
-      discountType: 'percentage',
-      discountValue: 0,
-    });
-  };
 
   const handleAddNewProduct = () => {
     const productWithId = { ...newProduct, id: Date.now().toString() };
@@ -90,10 +74,7 @@ export const AdminPage = ({
         <div>
           <h2 className="text-2xl font-semibold mb-4">쿠폰 관리</h2>
           <div className="bg-white p-4 rounded shadow">
-            <CouponAddForm
-              useNewCoupon={[newCoupon, setNewCoupon]}
-              handleAddCoupon={handleAddCoupon}
-            />
+            <CouponAddForm onCouponAdd={onCouponAdd} />
             <div>
               <h3 className="text-lg font-semibold mb-2">현재 쿠폰 목록</h3>
               <div className="space-y-2">

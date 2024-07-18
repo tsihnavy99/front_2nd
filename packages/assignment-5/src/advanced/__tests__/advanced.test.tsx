@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   act,
   fireEvent,
@@ -408,6 +408,48 @@ describe('advanced > ', () => {
 
         const { calcRemain } = useRemainCount();
         expect(calcRemain(item)).toBe(6);
+      });
+    });
+
+    describe('[Hook] useCouponAddForm 테스트 >', () => {
+      test('미입력 값 존재 시 쿠폰 추가 불가 >', () => {
+        render(<TestAdminPage />);
+
+        const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
+
+        // 쿠폰 이름 입력
+        fireEvent.change(screen.getByPlaceholderText('쿠폰 이름'), {
+          target: { value: '새 쿠폰' },
+        });
+
+        // 쿠폰 이름만 입력 후 추가 버튼 클릭
+        fireEvent.click(screen.getByText('쿠폰 추가'));
+
+        // alert 출력, 쿠폰 목록에 추가 X
+        expect(alertSpy).toHaveBeenCalled();
+        expect(alertSpy).toHaveBeenCalledWith(
+          '모든 값을 입력한 후에 추가해주세요.'
+        );
+        alertSpy.mockRestore();
+
+        // 나머지 값 모두 입력
+        fireEvent.change(screen.getByPlaceholderText('쿠폰 코드'), {
+          target: { value: 'NEW10' },
+        });
+        fireEvent.change(screen.getByRole('combobox'), {
+          target: { value: 'percentage' },
+        });
+        fireEvent.change(screen.getByPlaceholderText('할인 값'), {
+          target: { value: '10' },
+        });
+
+        // 모든 값 입력 후 추가 버튼 클릭
+        fireEvent.click(screen.getByText('쿠폰 추가'));
+
+        const $newCoupon = screen.getByTestId('coupon-3');
+
+        // 새 쿠폰 추가 성공
+        expect($newCoupon).toHaveTextContent('새 쿠폰 (NEW10):10% 할인');
       });
     });
   });
