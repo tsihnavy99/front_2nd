@@ -14,6 +14,8 @@ export const useCart = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
 
+  const cartItemsCount = cart.length;
+
   const addToCart = (product: Product) => {
     setCart((prevCart) => appendNewCartItem(prevCart, product));
   };
@@ -44,13 +46,29 @@ export const useCart = () => {
     return getMaxApplicableDiscount(item);
   };
 
+  const checkAndApplyCoupon = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    coupons: Coupon[]
+  ) => {
+    const selectedIndex = parseInt(e.target.value);
+    if (cart.length === 0) {
+      alert('장바구니에 상품이 있어야 쿠폰을 적용할 수 있습니다.');
+      return;
+    }
+    if (!isNaN(selectedIndex) && selectedIndex >= 0) {
+      applyCoupon(coupons[selectedIndex]);
+    }
+  };
+
   return {
     cart,
+    cartItemsCount,
     addToCart,
     removeFromCart,
     updateQuantity,
     applyCoupon,
     calculateTotal,
+    checkAndApplyCoupon,
     selectedCoupon,
     getRemainingStock,
     getAppliedDiscount,

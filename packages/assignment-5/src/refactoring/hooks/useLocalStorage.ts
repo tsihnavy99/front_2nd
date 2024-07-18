@@ -7,10 +7,12 @@ import { debounce } from './utils/commonUtils';
 export const useLocalStorage = () => {
   const {
     cart,
+    cartItemsCount,
     addToCart,
     removeFromCart,
     updateQuantity,
     applyCoupon,
+    checkAndApplyCoupon,
     calculateTotal,
     selectedCoupon,
     getRemainingStock,
@@ -83,10 +85,12 @@ export const useLocalStorage = () => {
 
   return {
     cart,
+    cartItemsCount,
     addToCart,
     removeFromCart,
     updateQuantity,
     applyCoupon,
+    checkAndApplyCoupon,
     calculateTotal,
     selectedCoupon,
     getAppliedCouponIndex,
