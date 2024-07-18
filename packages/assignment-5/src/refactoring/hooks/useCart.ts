@@ -4,7 +4,7 @@ import { CartItem, Coupon, Product } from '../../types';
 import {
   calculateCartTotal,
   updateCartItemQuantity,
-  getRemainingStockfromCart,
+  getRemainingStockFromCart,
   getMaxApplicableDiscount,
   appendNewCartItem,
   filterCartByProductId,
@@ -39,7 +39,7 @@ export const useCart = () => {
   };
 
   const getRemainingStock = (product: Product) => {
-    return getRemainingStockfromCart(cart, product);
+    return getRemainingStockFromCart(cart, product);
   };
 
   const getAppliedDiscount = (item: CartItem) => {

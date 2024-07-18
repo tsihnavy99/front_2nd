@@ -14,6 +14,10 @@ import { CartItem, Coupon, Product } from '../../types';
 import { useLocalStorage } from '../../refactoring/hooks';
 import * as couponUtils from '../../refactoring/hooks/utils/couponUtils';
 import { useRemainCount } from '../../refactoring/hooks/useRemainCount';
+import {
+  calculateDiscountByCoupon,
+  getRemainingStockFromCart,
+} from '../../refactoring/hooks/utils/cartUtils';
 
 const mockProducts: Product[] = [
   {
@@ -300,6 +304,76 @@ describe('advanced > ', () => {
             discountValue: 5000,
           },
         ]);
+      });
+    });
+
+    describe('[Util] 더 담을 수 있는 개수 체크 테스트 >', () => {
+      test('현재 담긴 개수와 최대 개수를 비교해 남은 개수 반환 >', () => {
+        const cart = [
+          {
+            product: {
+              id: 'p1',
+              name: '상품1',
+              price: 10000,
+              stock: 20,
+              discounts: [{ quantity: 10, rate: 0.1 }],
+            },
+            quantity: 13,
+          },
+          {
+            product: {
+              id: 'p2',
+              name: '상품2',
+              price: 20000,
+              stock: 26,
+              discounts: [],
+            },
+            quantity: 5,
+          },
+          {
+            product: {
+              id: 'p3',
+              name: '상품3',
+              price: 30000,
+              stock: 14,
+              discounts: [],
+            },
+            quantity: 14,
+          },
+        ];
+        const expectResult = [7, 21, 0];
+
+        cart.forEach((cartItem, index) => {
+          expect(getRemainingStockFromCart(cart, cartItem.product)).toBe(
+            expectResult[index]
+          );
+        });
+      });
+    });
+
+    describe('[Util] 쿠폰을 통해 할인받는 금액 반환 테스트 >', () => {
+      test('쿠폰을 적용하지 않았을 때 0 반환 >', () => {
+        expect(calculateDiscountByCoupon(10000, 4000, null)).toBe(0);
+      });
+
+      test('5000원 쿠폰을 적용했을 때 5000 반환 >', () => {
+        const coupon: Coupon = {
+          name: '쿠폰',
+          code: 'COUPON5000',
+          discountType: 'amount',
+          discountValue: 5000,
+        };
+        expect(calculateDiscountByCoupon(10000, 4000, coupon)).toBe(5000);
+      });
+
+      test('10% 쿠폰을 적용했을 때 600 반환 >', () => {
+        const coupon: Coupon = {
+          name: '쿠폰',
+          code: 'COUPON10PER',
+          discountType: 'percentage',
+          discountValue: 10,
+        };
+        expect(calculateDiscountByCoupon(10000, 4000, coupon)).toBe(600);
       });
     });
 

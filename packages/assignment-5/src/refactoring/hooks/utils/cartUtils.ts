@@ -14,7 +14,7 @@ export const calculateMaxQuantity = (newQuantity: number, stock: number) => {
 };
 
 // 특정 아이템의 더 담을 수 있는 개수 반환
-export const getRemainingStockfromCart = (
+export const getRemainingStockFromCart = (
   cart: CartItem[],
   product: Product
 ) => {
