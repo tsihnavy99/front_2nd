@@ -1,4 +1,5 @@
 import { Coupon } from '../../../types';
+import { findIndexOfSelectedCoupon } from '../../hooks/utils/couponUtils';
 
 interface Props {
   coupons: Coupon[];
@@ -17,7 +18,11 @@ export const CouponApply = ({
     <div className="mt-6 bg-white p-4 rounded shadow">
       <h2 className="text-2xl font-semibold mb-2">쿠폰 적용</h2>
       <select
-        value={selectedCoupon ? selectedCoupon.code : ''}
+        value={
+          selectedCoupon
+            ? findIndexOfSelectedCoupon(coupons, selectedCoupon)
+            : ''
+        }
         onChange={handleChange}
         className="w-full p-2 border rounded mb-2"
       >
