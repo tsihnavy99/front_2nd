@@ -1,4 +1,5 @@
 import { CartItem } from '../../../types';
+import { useRemainCount } from '../../hooks/useRemainCount';
 
 interface Props {
   cartItem: CartItem;
@@ -12,6 +13,8 @@ export const CartListItem = ({
   updateQuantity,
   removeFromCart,
 }: Props) => {
+  const { calcRemain } = useRemainCount();
+
   return (
     <div
       key={cartItem.product.id}
@@ -27,6 +30,9 @@ export const CartListItem = ({
               ({(appliedDiscount * 100).toFixed(0)}% 할인 적용)
             </span>
           )}
+          <span className="text-blue-600 ml-1">
+            (다음 할인까지 {calcRemain(cartItem)}개 남음)
+          </span>
         </span>
       </div>
       <div>

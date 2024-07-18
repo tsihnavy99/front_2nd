@@ -10,9 +10,10 @@ import {
 } from '@testing-library/react';
 import { CartPage } from '../../refactoring/components/CartPage';
 import { AdminPage } from '../../refactoring/components/AdminPage';
-import { Coupon, Product } from '../../types';
+import { CartItem, Coupon, Product } from '../../types';
 import { useLocalStorage } from '../../refactoring/hooks';
 import * as couponUtils from '../../refactoring/hooks/utils/couponUtils';
+import { useRemainCount } from '../../refactoring/hooks/useRemainCount';
 
 const mockProducts: Product[] = [
   {
@@ -385,6 +386,28 @@ describe('advanced > ', () => {
 
         // 새로고침 후 쿠폰 해제 상태 유지되는지 테스트
         expect(result.current.selectedCoupon).toEqual(null);
+      });
+    });
+
+    describe('[Hook] useRemainCount 테스트 >', () => {
+      test('현재 수량 기준 남은 다음 할인까지 남은 갯수 확인 >', () => {
+        // 현재 수량은 14, 다음 할인 기준 개수는 20
+        const item: CartItem = {
+          product: {
+            discounts: [
+              { quantity: 10, rate: 0.1 },
+              { quantity: 20, rate: 0.2 },
+            ],
+            id: 'p1',
+            name: '상품1',
+            price: 10000,
+            stock: 40,
+          },
+          quantity: 14,
+        };
+
+        const { calcRemain } = useRemainCount();
+        expect(calcRemain(item)).toBe(6);
       });
     });
   });
