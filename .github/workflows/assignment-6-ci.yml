@@ -5,14 +5,18 @@ on:
     types:
       - opened
     paths:
-      - 'packages/assignment-6/**'
+      - "packages/assignment-6/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: job1 구현
-        run: echo "job1의 내용을 구현해주세요"
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        run: pnpm -F assignment-6 build
+        if: failure()
+        with:
+          files: "**/build/test-results/test/TEST-*.xml"
 
   lint:
     runs-on: ubuntu-latest
