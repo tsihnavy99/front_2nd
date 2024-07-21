@@ -19,7 +19,7 @@ jobs:
         if: failure()
         uses: actions/github-script@v6.4.0
         env:
-          STEP_OUTPUT: ${{ steps }}
+          STEP_OUTPUT: ${{ steps.main_step }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
