@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: job3 구현
-        run: echo "job3의 내용을 구현해주세요"
+        run: pnpm -F assignment-6 test
 
   lighthouse:
     runs-on: ubuntu-latest
