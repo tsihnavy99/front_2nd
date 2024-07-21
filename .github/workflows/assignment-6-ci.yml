@@ -21,9 +21,10 @@ jobs:
         env:
           ERROR_MESSAGE: ${{ steps.main_step.outputs.stderr }}
         with:
-          const result = process.env.ERROR_MESSAGE
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const result = process.env.ERROR_MESSAGE
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
