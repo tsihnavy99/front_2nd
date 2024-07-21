@@ -19,14 +19,13 @@ jobs:
         if: failure()
         uses: actions/github-script@v6.4.0
         with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const { github, context } = require('@actions/github');
-            const prNumber = context.payload.pull_request.number;
-            const comment = `:x: Build failed for commit ${context.sha}. Please check the logs for details.`;
             github.rest.issues.createComment({
-              ...context.repo,
-              issue_number: prNumber,
-              body: comment,
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: steps.run_command.outcome,
             });
 
   lint:
