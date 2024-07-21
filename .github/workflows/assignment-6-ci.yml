@@ -19,11 +19,11 @@ jobs:
         if: failure()
         uses: actions/github-script@v6.4.0
         env:
-          ERROR_MESSAGE: ${{ steps.main_step.outputs.stderr }}
+          STEP_OUTPUT: ${{ steps.main_step.outputs }}
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const result = process.env.ERROR_MESSAGE
+            const result = process.env.STEP_OUTPUT
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
