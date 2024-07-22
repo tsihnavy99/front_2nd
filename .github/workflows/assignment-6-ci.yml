@@ -18,6 +18,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
+          version: 8
           run_install: false
 
       - name: Install Node.js
@@ -54,9 +55,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: job2 구현
-        run: pnpm -F assignment-6 lint 2> eslint_report.txt
-          ERROR_COUNT=$(grep -c "error" eslint_report.txt)
-          WARNING_COUNT=$(grep -c "warning" eslint_report.txt)
+        run: pnpm -F assignment-6 lint 2> error.log
+          ERROR_COUNT=$(grep -c "error" error.log)
+          WARNING_COUNT=$(grep -c "warning" error.log)
       - name: job2 에러 코멘트
         if: failure()
         uses: actions/github-script@v6.4.0
@@ -66,7 +67,7 @@ jobs:
             const errorCount = process.env.ESLINT_ERROR_COUNT;
             const warningCount = process.env.ESLINT_WARNING_COUNT;
             const fs = require('fs')
-            const report = fs.readFileSync('eslint_report.txt', 'utf8')
+            const report = fs.readFileSync('error.log', 'utf8')
 
             const message = `## ESLint Results\n\n${report}\n\n:x:${errorCount+warningCount} problem (${errorCount} error, ${warningCount} warnings)`
 
