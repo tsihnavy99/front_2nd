@@ -115,7 +115,7 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install
-          pnpm add --save-dev @vitest/coverage-v8 vitest
+          pnpm add --save-dev @vitest/coverage-v8 vitest --filter assignment-6
 
       - name: job3 run test
         run: pnpm -F assignment-6 test run --coverage.enabled true > test_result.log 2>&1
