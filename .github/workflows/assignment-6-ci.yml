@@ -118,7 +118,7 @@ jobs:
           pnpm add --save-dev @vitest/coverage-v8 vitest --filter assignment-6
 
       - name: job3 run test
-        run: pnpm -F assignment-6 test -- --coverage > test_result.log 2>&1
+        run: pnpm -F assignment-6 test -- --coverage > test_result.json 2>&1
 
       - name: job3 coverage comment
         if: always()
@@ -127,9 +127,12 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const fs = require('fs')
-            const report = fs.readFileSync('test_result.log', 'utf8')
+            const report = fs.readFileSync('test_result.json', 'utf8')
+            const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
-            const message = `## 테스트\n\n${report}`
+            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
+              return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
+            }, "## 테스트\n\n")
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

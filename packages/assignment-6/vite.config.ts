@@ -8,7 +8,7 @@ export default mergeConfig(
     test: {
       coverage: {
         provider: "v8",
-        reporter: ["text", "json", "html"],
+        reporter: ["json-summary", "text", "html"],
       },
     },
   }),
