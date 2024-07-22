@@ -42,7 +42,7 @@ jobs:
             const fs = require('fs')
             const errorLog = fs.readFileSync('error.log', 'utf8')
 
-            const message = `## Build error\n\n${errorLog}`
+            const message = `## Build Error\n\n${errorLog}`
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -73,7 +73,7 @@ jobs:
         run: pnpm install
 
       - name: job2 구현
-        run: pnpm -F assignment-6 lint 2> error.log
+        run: pnpm -F assignment-6 lint > error.log 2>&1
           ERROR_COUNT=$(grep -c "error" error.log)
           WARNING_COUNT=$(grep -c "warning" error.log)
           echo "ESLINT_ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_ENV
@@ -88,8 +88,8 @@ jobs:
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
-            const errorCount = process.env.ESLINT_ERROR_COUNT;
-            const warningCount = process.env.ESLINT_WARNING_COUNT;
+            const errorCount = parseInt(process.env.ERROR_COUNT) || 0;
+            const warningCount = parseInt(process.env.WARNING_COUNT) || 0;
             const fs = require('fs')
             const report = fs.readFileSync('error.log', 'utf8')
 
