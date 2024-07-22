@@ -7,7 +7,7 @@ export default mergeConfig(
     plugins: [react()],
     test: {
       coverage: {
-        provider: "istanbul",
+        provider: "v8",
         reporter: ["text", "json", "html"],
       },
     },
