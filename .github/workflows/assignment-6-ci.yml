@@ -74,7 +74,7 @@ jobs:
 
       - name: job2 구현
         run: |
-          pnpm -F assignment-6 lint -o lint_output.log
+          pnpm -F assignment-6 lint > lint_output.log 2>&1
 
       - name: job2 에러 코멘트
         if: failure()
