@@ -25,11 +25,12 @@ jobs:
           script: |
             const fs = require('fs')
             const errorLog = fs.readFileSync('error.log', 'utf8')
+
             github.rest.issues.createComment({
               issue_number: ${{ steps.find-pull-request.outputs.result }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: ${{errorLog}}
+              body: errorLog
             })
 
   lint:
