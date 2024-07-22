@@ -74,11 +74,11 @@ jobs:
 
       - name: job2 구현
         run: |
-          pnpm -F assignment-6 lint > lint_output.log 2>&1; then
-          ERROR_COUNT=$(grep -c "error" lint_output.log)
-          WARNING_COUNT=$(grep -c "warning" lint_output.log)
-          echo "ESLINT_ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_ENV
-          echo "ESLINT_WARNING_COUNT=$WARNING_COUNT" >> $GITHUB_ENV
+          if pnpm -F assignment-6 lint > lint_output.log 2>&1; then
+            ERROR_COUNT=$(grep -c "error" lint_output.log)
+            WARNING_COUNT=$(grep -c "warning" lint_output.log)
+            echo "ESLINT_ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_ENV
+            echo "ESLINT_WARNING_COUNT=$WARNING_COUNT" >> $GITHUB_ENV
 
       - name: job2 에러 코멘트
         if: failure()
