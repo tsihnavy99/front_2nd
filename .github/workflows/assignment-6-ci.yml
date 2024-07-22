@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: job1 구현
-        run: pnpm -F assignment-6 build
+        run: pnpm -F assignment-6 build 2> error.log || true
       - name: job1 에러 코멘트
         if: failure()
         uses: actions/github-script@v6.4.0
@@ -23,14 +23,14 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const result = process.env.STEP_OUTPUT
-
+            const fs = require('fs')
+            const errorLog = fs.readFileSync('error.log', 'utf8')
             github.rest.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: ${{ steps.find-pull-request.outputs.result }},
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: result
-            });
+              body: ${{errorLog}}
+            })
 
   lint:
     runs-on: ubuntu-latest
