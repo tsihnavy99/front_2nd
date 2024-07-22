@@ -92,7 +92,7 @@ jobs:
             const errorCount = parseInt(process.env.ERROR_COUNT) || 0;
             const warningCount = parseInt(process.env.WARNING_COUNT) || 0;
             const fs = require('fs')
-            const report = fs.readFileSync('error.log', 'utf8')
+            const report = fs.readFileSync('lint_output.log', 'utf8')
 
             const message = `## ESLint Results\n\n${report}\n\n:x:${errorCount+warningCount} problem (${errorCount} error, ${warningCount} warnings)`
 
