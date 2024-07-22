@@ -84,13 +84,8 @@ jobs:
           script: |
             const fs = require('fs')
             const report = fs.readFileSync('lint_output.log', 'utf8')
-            let errorCount = 0;
-            let warningCount = 0;
 
-            errorCount = (report.match(/error/g) || []).length;
-            warningCount = (report.match(/warning/g) || []).length;
-
-            const message = `## ESLint Results\n\n${report}\n\n:x:${errorCount+warningCount} problem (${errorCount} error, ${warningCount} warnings)`
+            const message = `## ESLint Results\n\n${report}`
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
