@@ -120,6 +120,7 @@ jobs:
 
       - name: job3 coverage comment
         if: always()
+        uses: actions/github-script@v6.4.0
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
