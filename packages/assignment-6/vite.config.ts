@@ -9,6 +9,7 @@ export default mergeConfig(
       coverage: {
         provider: "v8",
         reporter: ["json-summary", "text", "html"],
+        reportsDirectory: "./coverage",
       },
     },
   }),
