@@ -128,17 +128,17 @@ jobs:
           script: |
             const fs = require('fs')
             const report = fs.readFileSync('test_report.json', 'utf8')
-            const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
+            # const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
-            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
-              return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
-            }, "## 테스트\n\n")
+            # const message = Object.entries(report.total).reduce((prev, [key, value]) => {
+            #   return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
+            # }, "## 테스트\n\n")
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: report
+              body: JSON.stringify(report)
             })
 
   lighthouse:
