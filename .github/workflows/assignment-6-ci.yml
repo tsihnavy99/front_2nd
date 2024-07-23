@@ -113,9 +113,10 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: |
-          pnpm install
-          pnpm add --save-dev @vitest/coverage-v8 vitest --filter assignment-6
+        run: pnpm install
+
+      - name: Install coverage
+        run: pnpm add --save-dev @vitest/coverage-v8@2.0.2 --filter assignment-6
 
       - name: job3 run test
         run: |
