@@ -127,12 +127,13 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const fs = require('fs')
-            const report = JSON.parse(fs.readFileSync('test_report.json', 'utf8'))
+            const result = fs.readFileSync('test_report.json', 'utf8')
+            const report = JSON.parse(result)
             const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
             const message = Object.entries(report.total).reduce((prev, [key, value]) => {
               return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
-            }, "## 테스트\n\n") || Object.keys(report).join(', ')
+            }, "## 테스트\n\n") || result
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
