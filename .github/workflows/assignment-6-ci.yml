@@ -118,7 +118,7 @@ jobs:
           pnpm add --save-dev @vitest/coverage-v8 vitest --filter assignment-6
 
       - name: job3 run test
-        run: pnpm -F assignment-6 test -- --coverage --coverage.reporter=json-summary > test_report.json 2>&1
+        run: pnpm -F assignment-6 test -- --coverage --coverage.reporter=json-summary
 
       - name: job3 coverage comment
         if: always()
@@ -127,7 +127,7 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const fs = require('fs')
-            const result = fs.readFileSync('test_report.json', 'utf8')
+            const result = fs.readFileSync('coverage/coverage-summary.json', 'utf8')
             const report = JSON.parse(result)
             const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
