@@ -128,17 +128,23 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const title = {'lines': '라인', 'statements': '구문', 'functions': '함수', 'branches': '브랜치'}
+            let message = ''
 
-            const path = require('path')
-            const coveragePath = path.join(process.cwd(), 'packages/assignment-6/coverage', 'coverage-summary.json')
+            try {
+              const path = require('path')
+              const coveragePath = path.join(process.cwd(), 'packages/assignment-6/coverage', 'coverage-summary.json')
 
-            const fs = require('fs')
-            const result = fs.readFileSync(coveragePath, 'utf8')
-            const report = JSON.parse(result)
+              const fs = require('fs')
+              const result = fs.readFileSync(coveragePath, 'utf8')
+              const report = JSON.parse(result)
 
-            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
-              return (prev += `- ${title[key]||key} 커버리지: ${value.pct}%\n`)
-            }, "## 테스트\n\n")
+              message = Object.entries(report.total).reduce((prev, [key, value]) => {
+                if(!title[key]) return prev
+                return (prev += `- ${title[key]} 커버리지: ${value.pct}%\n`)
+              }, "## 테스트 성공:white_check_mark:\n\n### 커버리지 결과")
+            } catch (e) {
+              message = "## 테스트 실패:x:\n\n### 출력할 결과가 없습니다."
+            }
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
