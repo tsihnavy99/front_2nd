@@ -119,7 +119,9 @@ jobs:
         run: pnpm add --save-dev @vitest/coverage-v8@2.0.2 --filter assignment-6
 
       - name: job3 run test
-        run: pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary
+        run: |
+          pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary |
+          jq '.total' > result.json
 
       - name: job3 coverage comment
         if: always()
@@ -128,11 +130,11 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const fs = require('fs')
-            const result = fs.readFileSync('coverage/coverage-summary.json', 'utf8')
+            const result = fs.readFileSync('result.json', 'utf8')
             const report = JSON.parse(result)
             const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
-            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
+            const message = Object.entries(report).reduce((prev, [key, value]) => {
               return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
             }, "## 테스트\n\n") || result
 
