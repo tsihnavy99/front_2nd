@@ -141,7 +141,7 @@ jobs:
               message = Object.entries(report.total).reduce((prev, [key, value]) => {
                 if(!title[key]) return prev
                 return (prev += `- ${title[key]} 커버리지: ${value.pct}%\n`)
-              }, "## 테스트 성공:white_check_mark:\n\n### 커버리지 결과")
+              }, "## 테스트 성공:white_check_mark:\n\n### 커버리지 결과\n\n")
             } catch (e) {
               message = "## 테스트 실패:x:\n\n### 출력할 결과가 없습니다."
             }
