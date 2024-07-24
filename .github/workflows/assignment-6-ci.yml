@@ -120,7 +120,7 @@ jobs:
 
       - name: job3 run test
         run: |
-          pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary > result.json
+          pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary > result.log
 
       - name: job3 coverage comment
         if: always()
@@ -129,19 +129,19 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const fs = require('fs')
-            const result = fs.readFileSync('result.json', 'utf8')
-            const report = JSON.parse(result)
-            const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
+            const result = fs.readFileSync('result.log', 'utf8')
+            # const report = JSON.parse(result)
+            # const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
-            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
-              return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
-            }, "## 테스트\n\n") || result
+            # const message = Object.entries(report.total).reduce((prev, [key, value]) => {
+            #   return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
+            # }, "## 테스트\n\n") || result
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: message
+              body: result
             })
 
   lighthouse:
