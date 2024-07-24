@@ -119,8 +119,7 @@ jobs:
         run: pnpm add --save-dev @vitest/coverage-v8@2.0.2 --filter assignment-6
 
       - name: job3 run test
-        run: |
-          pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary > result.log
+        run: pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary
 
       - name: job3 coverage comment
         if: always()
@@ -128,14 +127,22 @@ jobs:
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
+            const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
+            const coveragePath = path.join(process.cwd(), 'coverage', 'coverage-summary.json');
+
             const fs = require('fs')
-            const result = fs.readFileSync('result.log', 'utf8')
+            const result = fs.readFileSync(coveragePath, 'utf8')
+            const report = JSON.parse(result)
+
+            const message = Object.entries(report.total).reduce((prev, [key, value]) => {
+              return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
+            }, "## 테스트\n\n")
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: result
+              body: message
             })
 
   lighthouse:
