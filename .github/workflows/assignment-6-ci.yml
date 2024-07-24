@@ -194,6 +194,9 @@ jobs:
 
             const fs = require('fs')
             const results = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+
+            const resultCategory = {'performance': 'Performance', 'accessibility': 'Accessibility', 
+                                    'best-practices': 'Best Practices', 'seo': 'SEO']
             let message = "";
 
             results.forEach((result) => {
@@ -211,8 +214,7 @@ jobs:
                 `## Lighthouse 성능 측정 결과`,
                 `| 카테고리 | 점수 |`,
                 `| --- | --- |`,
-                `| ${score(summary.performance)} Performance | ${summary.performance} |`,
-                { ... }
+                ...Object.entries(resultCategory).map(([key, value]) => `| ${score(summary[key])} ${value} | ${summary[key]} |`),
               ].join("\n");
             });
 
