@@ -196,7 +196,7 @@ jobs:
             const results = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
 
             const resultCategory = {'performance': 'Performance', 'accessibility': 'Accessibility', 
-                                    'best-practices': 'Best Practices', 'seo': 'SEO']
+                                    'best-practices': 'Best Practices', 'seo': 'SEO'}
             let message = "";
 
             results.forEach((result) => {
