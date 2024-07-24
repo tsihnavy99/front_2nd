@@ -130,7 +130,7 @@ jobs:
             const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
 
             const path = require('path')
-            const coveragePath = path.join(process.cwd(), 'coverage', 'coverage-summary.json')
+            const coveragePath = path.join(process.cwd(), 'packages/assignment-6/coverage', 'coverage-summary.json')
 
             const fs = require('fs')
             const result = fs.readFileSync(coveragePath, 'utf8')
