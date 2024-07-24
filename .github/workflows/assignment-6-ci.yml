@@ -127,7 +127,7 @@ jobs:
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
-            const title = {'lines': '라인', 'statement': '구문', 'functions': '함수', 'branches': '브랜치'}
+            const title = {'lines': '라인', 'statements': '구문', 'functions': '함수', 'branches': '브랜치'}
 
             const path = require('path')
             const coveragePath = path.join(process.cwd(), 'packages/assignment-6/coverage', 'coverage-summary.json')
@@ -137,7 +137,7 @@ jobs:
             const report = JSON.parse(result)
 
             const message = Object.entries(report.total).reduce((prev, [key, value]) => {
-              return (prev += `- ${title[key]} 커버리지: ${value.pct}\n`)
+              return (prev += `- ${title[key]||key} 커버리지: ${value.pct}%\n`)
             }, "## 테스트\n\n")
 
             github.rest.issues.createComment({
