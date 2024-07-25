@@ -196,6 +196,8 @@ jobs:
                 (key) => (summary[key] = formatResult(summary[key]))
               );
 
+              const score = (res) => (res >= 90 ? "🟢" : res >= 50 ? "🟠" : "🔴");
+
               message = [
                 `## Lighthouse 성능 측정 결과`,
                 `| 카테고리 | 점수 |`,
