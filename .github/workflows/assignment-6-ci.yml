@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -22,7 +22,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 20
           cache: "pnpm"
@@ -35,7 +35,7 @@ jobs:
 
       - name: job1 error comment
         if: failure()
-        uses: actions/github-script@v6.4.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -64,7 +64,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 20
           cache: "pnpm"
@@ -78,7 +78,7 @@ jobs:
 
       - name: job2 error comment
         if: failure()
-        uses: actions/github-script@v6.4.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -107,7 +107,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 20
           cache: "pnpm"
@@ -123,7 +123,7 @@ jobs:
 
       - name: job3 coverage comment
         if: always()
-        uses: actions/github-script@v6.4.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -166,7 +166,7 @@ jobs:
           run_install: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 20
           cache: "pnpm"
@@ -185,7 +185,7 @@ jobs:
           lhci autorun || echo "Fail to Run Lighthouse CI!"
 
       - name: job4 lighthouse comment
-        uses: actions/github-script@v6.4.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
@@ -230,7 +230,7 @@ jobs:
     if: github.event.action == 'opened'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.7
 
       - name: Select random reviewer
         id: random
@@ -239,8 +239,21 @@ jobs:
           SELECTED=${REVIEWERS[$RANDOM % ${#REVIEWERS[@]}]}
           echo "REVIEWER=$SELECTED" >> $GITHUB_OUTPUT
 
+      - name: Assign reviewer
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{secrets.TOKEN_FOR_CI}}
+          script: |
+            const reviewer = '${{ steps.random.outputs.REVIEWER }}';
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              reviewers: [reviewer]
+            });
+
       - name: job5 Comment on PR
-        uses: actions/github-script@v6.4.0
+        uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
@@ -249,5 +262,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: `${reviewer} 님, 리뷰를 부탁드립니다.`
+              body: `@${reviewer} 님, 리뷰를 부탁드립니다 :sparkles:`
             });
