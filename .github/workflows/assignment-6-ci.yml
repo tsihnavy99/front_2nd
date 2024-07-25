@@ -126,7 +126,7 @@ jobs:
 
             try {
               const fs = require('fs')
-              const coveragePath = 'packages/assignment-6/coverage/coverage-summary.json')
+              const coveragePath = 'packages/assignment-6/coverage/coverage-summary.json'
               const result = fs.readFileSync(coveragePath, 'utf8')
               const report = JSON.parse(result)
 
