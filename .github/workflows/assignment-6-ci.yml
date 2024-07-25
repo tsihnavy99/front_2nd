@@ -235,6 +235,13 @@ jobs:
               body: `@${reviewer} 님, 리뷰 부탁드립니다 :sparkles:`
             });
 
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [context.payload.pull_request.user.login]
+            });
+
             await github.rest.pulls.requestReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
