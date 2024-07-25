@@ -5,5 +5,8 @@ module.exports = {
       url: ["http://localhost:3000"],
       numberOfRuns: 5,
     },
+    upload: {
+      outputDir: "./lhci_reports",
+    },
   },
 };
