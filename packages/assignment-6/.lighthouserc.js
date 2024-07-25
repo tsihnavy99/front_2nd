@@ -3,9 +3,9 @@ module.exports = {
     collect: {
       staticDistDir: "./packages/assignment-6/dist",
       url: ["http://localhost:3000"],
-      numberOfRuns: 5,
     },
     upload: {
+      target: "filesystem",
       outputDir: "./lhci_reports",
     },
   },
