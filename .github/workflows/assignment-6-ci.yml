@@ -226,7 +226,7 @@ jobs:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
             const reviewers = ["kimfield98", "steve-shim"]
-            const reviewer = reviewers[Math.random() * reviewers.length]
+            const reviewer = reviewers[Math.floor(Math.random() * reviewers.length)]
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
