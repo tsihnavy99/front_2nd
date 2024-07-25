@@ -18,8 +18,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 8
-          run_install: false
+          version: latest
 
       - name: Install Node.js
         uses: actions/setup-node@v4.0.3
@@ -60,8 +59,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 8
-          run_install: false
+          version: latest
 
       - name: Install Node.js
         uses: actions/setup-node@v4.0.3
@@ -103,8 +101,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 8
-          run_install: false
+          version: latest
 
       - name: Install Node.js
         uses: actions/setup-node@v4.0.3
@@ -115,11 +112,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install coverage
-        run: pnpm add --save-dev @vitest/coverage-v8@2.0.2 --filter assignment-6
-
       - name: job3 run test
-        run: pnpm -F assignment-6 test -- --coverage.enabled true --coverage.reporter=json-summary
+        run: pnpm -F assignment-6 test
 
       - name: job3 coverage comment
         if: always()
@@ -131,10 +125,8 @@ jobs:
             let message = ''
 
             try {
-              const path = require('path')
-              const coveragePath = path.join(process.cwd(), 'packages/assignment-6/coverage', 'coverage-summary.json')
-
               const fs = require('fs')
+              const coveragePath = 'packages/assignment-6/coverage/coverage-summary.json')
               const result = fs.readFileSync(coveragePath, 'utf8')
               const report = JSON.parse(result)
 
@@ -162,8 +154,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
-          version: 8
-          run_install: false
+          version: latest
 
       - name: Install Node.js
         uses: actions/setup-node@v4.0.3
@@ -180,19 +171,16 @@ jobs:
       - name: Run Lighthouse CI
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.TOKEN_FOR_CI }}
-        run: |
-          npm install -g @lhci/cli
-          lhci autorun --collect.staticDistDir=./packages/assignment-6/dist || echo "Fail to Run Lighthouse CI!"
+        run: pnpm -F assignment-6 lighthouse
 
       - name: job4 lighthouse comment
+        if: success()
         uses: actions/github-script@v7.0.1
         with:
           github-token: ${{secrets.TOKEN_FOR_CI}}
           script: |
-            const path = require('path')
-            const coveragePath = path.join(process.cwd(), 'packages/assignment-6/lhci_reports', 'manifest.json')
-
             const fs = require('fs')
+            const coveragePath = 'packages/assignment-6/lhci_reports/manifest.json'
             const results = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
 
             const resultCategory = {'performance': 'Performance', 'accessibility': 'Accessibility', 

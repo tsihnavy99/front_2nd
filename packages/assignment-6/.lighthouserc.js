@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      staticDistDir: "./packages/assignment-6/dist",
+      startServerCommand: "pnpm -F assignment-6 start",
       url: ["http://localhost:3000"],
     },
     upload: {
