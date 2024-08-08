@@ -4,6 +4,7 @@ export interface RepeatInfo {
   type: RepeatType;
   interval: number;
   endDate?: string;
+  excludeDates?: Date[];
 }
 
 export interface Event {
@@ -17,6 +18,7 @@ export interface Event {
   category: string;
   repeat: RepeatInfo;
   notificationTime: number; // 분 단위로 저장
+  isRepeat?: boolean;
 }
 
 export interface EventFormLabel {

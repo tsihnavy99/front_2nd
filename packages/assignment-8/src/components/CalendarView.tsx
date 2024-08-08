@@ -35,6 +35,16 @@ const CalendarView = ({
   }, [currentDate]);
 
   const navigate = (direction: "prev" | "next") => {
+    const test = new Date(currentDate)
+    console.log('test111', test)
+    if(view === 'week') {
+      console.log('test week', test.getDate() + (direction === "next" ? 7 : -7))
+    } else {
+      console.log('test month', test.getMonth() + (direction === "next" ? 1 : -1))
+      console.log('test333', test, test.getMonth(), test.getDate())
+      test.setMonth(test.getMonth() + (direction === 'next' ? 1 : -1))
+      console.log('test333', test, test.getMonth(), test.getDate())
+    }
     setCurrentDate((prevDate) => {
       const newDate = new Date(prevDate);
       if (view === "week") {

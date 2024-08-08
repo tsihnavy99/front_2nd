@@ -56,6 +56,11 @@ const useEventForm = (isEditing: boolean = false) => {
     setEventFormData((prev) => {
       const newValue: { [key: string]: string | number | boolean } = {};
       newValue[label] = value;
+      /// 추가
+      if(label === 'isRepeating') { // 반복 설정 추가 시 반복 주기는 매일, 삭제 시 none
+        newValue['repeatType'] = value ? 'daily' : 'none';
+      }
+      ///
       return { ...prev, ...newValue };
     });
   };
@@ -128,12 +133,16 @@ const useEventForm = (isEditing: boolean = false) => {
     try {
       let response;
       if (isEditing) {
+        const updatedEvent = {...eventData};
+        updatedEvent['id'] = undefined;
+        updatedEvent['date'] = undefined;
+
         response = await fetch(`/api/events/${eventData.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(eventData),
+          body: JSON.stringify(updatedEvent),
         });
       } else {
         response = await fetch("/api/events", {
