@@ -80,7 +80,7 @@ const TIME_SLOTS = [
   { id: 24, label: "22:35~23:25" },
 ];
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 100;
 
 const fetchMajors = () => axios.get<Lecture[]>('/schedules-majors.json');
 const fetchLiberalArts = () => axios.get<Lecture[]>('/schedules-majors.json');
