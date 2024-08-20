@@ -17,7 +17,7 @@ import { Schedule } from "./types.ts";
 import { fill2, parseHnM } from "./utils.ts";
 import { useDndContext, useDraggable } from "@dnd-kit/core";
 import { CSS } from '@dnd-kit/utilities';
-import { ComponentProps, Fragment } from "react";
+import { ComponentProps, Fragment, useMemo } from "react";
 
 interface Props {
   tableId: string;
@@ -58,12 +58,8 @@ const ScheduleTable = ({ tableId, schedules, onScheduleTimeClick, onDeleteButton
 
   const activeTableId = getActiveTableId();
 
-  return (
-    <Box
-      position="relative"
-      outline={activeTableId === tableId ? "5px dashed" : undefined}
-      outlineColor="blue.300"
-    >
+  const renderGrid = useMemo(() => {
+    return (
       <Grid
         templateColumns={`120px repeat(${DAY_LABELS.length}, ${CellSize.WIDTH}px)`}
         templateRows={`40px repeat(${TIMES.length}, ${CellSize.HEIGHT}px)`}
@@ -110,6 +106,16 @@ const ScheduleTable = ({ tableId, schedules, onScheduleTimeClick, onDeleteButton
           </Fragment>
         ))}
       </Grid>
+    )
+  }, [onScheduleTimeClick])
+
+  return (
+    <Box
+      position="relative"
+      outline={activeTableId === tableId ? "5px dashed" : undefined}
+      outlineColor="blue.300"
+    >
+      {renderGrid}
 
       {schedules.map((schedule, index) => (
         <DraggableSchedule
