@@ -1,9 +1,10 @@
 import { DndContext, Modifier, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { PropsWithChildren } from "react";
+import { memo, PropsWithChildren, useCallback, useMemo } from "react";
 import { CellSize, DAY_LABELS } from "./constants.ts";
-import { useScheduleContext } from "./ScheduleContext.tsx";
+import { Schedule } from "./types.ts";
+import { useTableContext } from "./TableProvider.tsx";
 
-function createSnapModifier(): Modifier {
+export function createSnapModifier(): Modifier {
   return ({ transform, containerNodeRect, draggingNodeRect }) => {
     const containerTop = containerNodeRect?.top ?? 0;
     const containerLeft = containerNodeRect?.left ?? 0;
@@ -28,8 +29,8 @@ function createSnapModifier(): Modifier {
 
 const modifiers = [createSnapModifier()]
 
-export default function ScheduleDndProvider({ children }: PropsWithChildren) {
-  const { schedulesMap, setSchedulesMap } = useScheduleContext();
+const ScheduleDndProvider = memo(function ScheduleDndProvider({ children }: PropsWithChildren) {
+  const { schedules, update } = useTableContext();
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -39,33 +40,48 @@ export default function ScheduleDndProvider({ children }: PropsWithChildren) {
   );
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = useCallback((event: any) => {
     const { active, delta } = event;
     const { x, y } = delta;
     const [tableId, index] = active.id.split(':');
-    const schedule = schedulesMap[tableId][index];
+    const schedule = schedules[index];
     const nowDayIndex = DAY_LABELS.indexOf(schedule.day as typeof DAY_LABELS[number])
     const moveDayIndex = Math.floor(x / 80);
     const moveTimeIndex = Math.floor(y / 30);
 
-    setSchedulesMap({
-      ...schedulesMap,
-      [tableId]: schedulesMap[tableId].map((targetSchedule, targetIndex) => {
+    const updateSchedules = () => {
+      const updated: Schedule[] = [];
+
+      schedules.forEach((targetSchedule, targetIndex) => {
         if (targetIndex !== Number(index)) {
-          return { ...targetSchedule }
-        }
-        return {
-          ...targetSchedule,
-          day: DAY_LABELS[nowDayIndex + moveDayIndex],
-          range: targetSchedule.range.map(time => time + moveTimeIndex),
+          updated.push(targetSchedule);
+        } else {
+          const sc = {...targetSchedule,
+            day: DAY_LABELS[nowDayIndex + moveDayIndex],
+            range: targetSchedule.range.map(time => time + moveTimeIndex),
+          }
+          updated.push(sc)
         }
       })
-    })
-  };
+  
+      update(tableId, updated)
+    }
+    
+    updateSchedules();
+  }, [schedules, update]);
+
+  const value = useMemo(
+    () => ({
+      sensors,
+      handleDragEnd,
+    }),
+    [sensors, handleDragEnd]
+  );
 
   return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={modifiers}>
+    <DndContext sensors={value.sensors} onDragEnd={value.handleDragEnd} modifiers={modifiers}>
       {children}
     </DndContext>
   );
-}
+})
+export default ScheduleDndProvider;
