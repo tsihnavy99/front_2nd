@@ -17,13 +17,18 @@ import { Schedule } from "./types.ts";
 import { fill2, parseHnM } from "./utils.ts";
 import { useDndContext, useDraggable } from "@dnd-kit/core";
 import { CSS } from '@dnd-kit/utilities';
-import { ComponentProps, Fragment, useMemo } from "react";
+import { ComponentProps, Fragment, useCallback, useMemo } from "react";
+import ScheduleDndProvider from './ScheduleDndProvider.tsx';
+import { useTableContext } from './TableProvider.tsx';
 
 interface Props {
   tableId: string;
-  schedules: Schedule[];
+  setSearchInfo: React.Dispatch<React.SetStateAction<{
+    tableId: string;
+    day?: string;
+    time?: number;
+} | null>>
   onScheduleTimeClick?: (timeInfo: { day: string, time: number }) => void;
-  onDeleteButtonClick?: (timeInfo: { day: string, time: number }) => void;
 }
 
 const TIMES = [
@@ -38,13 +43,14 @@ const TIMES = [
     .map((v) => `${parseHnM(v)}~${parseHnM(v + 50 * 분)}`),
 ] as const;
 
-const ScheduleTable = ({ tableId, schedules, onScheduleTimeClick, onDeleteButtonClick }: Props) => {
+const ScheduleTable = ({ tableId, setSearchInfo }: Props) => {
+  const {schedules, update} = useTableContext(); 
 
-  const getColor = (lectureId: string): string => {
+  const getColor = useCallback((lectureId: string): string => {
     const lectures = [...new Set(schedules.map(({ lecture }) => lecture.id))];
     const colors = ["#fdd", "#ffd", "#dff", "#ddf", "#fdf", "#dfd"];
     return colors[lectures.indexOf(lectureId) % colors.length];
-  };
+  }, [schedules]);
 
   const dndContext = useDndContext();
 
@@ -56,7 +62,18 @@ const ScheduleTable = ({ tableId, schedules, onScheduleTimeClick, onDeleteButton
     return null;
   }
 
+  const onScheduleTimeClick = useCallback((timeInfo: {
+    day?: string;
+    time?: number;}) => {
+    setSearchInfo({ tableId, ...timeInfo })
+  }, [setSearchInfo, tableId])
+
   const activeTableId = getActiveTableId();
+
+  const onDeleteButtonClick = useCallback(({ tableId, day, time }: {tableId: string, day: string, time: number}) => 
+    update(tableId, schedules.filter((schedule) => 
+      schedule.day !== day || !schedule.range.includes(time)))
+  , [schedules, update])
 
   const renderGrid = useMemo(() => {
     return (
@@ -109,28 +126,30 @@ const ScheduleTable = ({ tableId, schedules, onScheduleTimeClick, onDeleteButton
     )
   }, [onScheduleTimeClick])
 
-  return (
+  return useMemo(() => (
     <Box
       position="relative"
       outline={activeTableId === tableId ? "5px dashed" : undefined}
       outlineColor="blue.300"
     >
       {renderGrid}
-
-      {schedules.map((schedule, index) => (
-        <DraggableSchedule
-          key={`${schedule.lecture.title}-${index}`}
-          id={`${tableId}:${index}`}
-          data={schedule}
-          bg={getColor(schedule.lecture.id)}
-          onDeleteButtonClick={() => onDeleteButtonClick?.({
-            day: schedule.day,
-            time: schedule.range[0],
-          })}
-        />
-      ))}
+      <ScheduleDndProvider>
+        {schedules.map((schedule, index) => (
+          <DraggableSchedule
+            key={`${schedule.lecture.title}-${index}`}
+            id={`${tableId}:${index}`}
+            data={schedule}
+            bg={getColor(schedule.lecture.id)}
+            onDeleteButtonClick={() => onDeleteButtonClick?.({
+              tableId,
+              day: schedule.day,
+              time: schedule.range[0],
+            })}
+          />
+        ))}
+      </ScheduleDndProvider>
     </Box>
-  );
+  ), [activeTableId, getColor, onDeleteButtonClick, renderGrid, schedules, tableId]);
 };
 
 const DraggableSchedule = ({
@@ -147,7 +166,7 @@ const DraggableSchedule = ({
   const topIndex = range[0] - 1;
   const size = range.length;
 
-  return (
+  return useMemo(() => (
     <Popover>
       <PopoverTrigger>
         <Box
@@ -180,7 +199,7 @@ const DraggableSchedule = ({
         </PopoverBody>
       </PopoverContent>
     </Popover>
-  );
+  ), [attributes, bg, lecture.title, leftIndex, listeners, onDeleteButtonClick, room, setNodeRef, size, topIndex, transform]);
 }
 
 export default ScheduleTable;

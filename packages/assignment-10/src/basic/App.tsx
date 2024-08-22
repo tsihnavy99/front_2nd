@@ -1,5 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { ScheduleProvider } from './ScheduleContext.tsx';
+import { ScheduleIdProvider, ScheduleProvider } from './ScheduleContext.tsx';
 import { ScheduleTables } from "./ScheduleTables.tsx";
 
 function App() {
@@ -7,7 +7,9 @@ function App() {
   return (
     <ChakraProvider>
       <ScheduleProvider>
-        <ScheduleTables/>
+        <ScheduleIdProvider>
+          <ScheduleTables/>
+        </ScheduleIdProvider>
       </ScheduleProvider>
     </ChakraProvider>
   );
